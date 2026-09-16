@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE martif SYSTEM "TBXBasiccoreStructV02.dtd">
+<martif type="TBX-Basic" xml:lang="de-DE">
+  <martifHeader>
+    <fileDesc>
+      <titleStmt>
+        <title>project_content - projektspezifische Terminologie</title>
+      </titleStmt>
+      <sourceDesc>
+        <p>Platzhalter</p>
+      </sourceDesc>
+    </fileDesc>
+  </martifHeader>
+  <text>
+    <body>
+      <termEntry id="te0001">
+        <langSet xml:lang="de-DE">
+          <tig>
+            <term>[Bevorzugte Benennung]</term>
+            <termNote type="normativeAuthorization">preferredTerm</termNote>
+          </tig>
+        </langSet>
+      </termEntry>
+    </body>
+  </text>
+</martif>

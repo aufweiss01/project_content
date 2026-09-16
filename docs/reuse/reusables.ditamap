@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map PUBLIC "-//OASIS//DTD DITA 1.3 Map//EN" "map.dtd">
+<map xml:lang="de-DE">
+  <title>Reusables</title>
+  <mapref href="project_names.ditamap"/>
+  <mapref href="reusable_image_refs.ditamap"/>
+  <mapref href="../links/external_links.ditamap"/>
+  <mapref href="../links/internal_links.ditamap"/>
+  <keydef keys="c_reuse" href="c_reuse.dita"/>
+  <keydef keys="t_reuse" href="t_reuse.dita"/>
+  <keydef keys="r_reuse" href="r_reuse.dita"/>
+  <keydef keys="ts_reuse" href="ts_reuse.dita"/>
+</map>

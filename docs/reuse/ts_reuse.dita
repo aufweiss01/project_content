@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE troubleshooting PUBLIC "-//OASIS//DTD DITA 1.3 Troubleshooting//EN" "troubleshooting.dtd">
+<troubleshooting id="ts_reuse" xml:lang="de-DE">
+  <title>TS Reuse</title>
+  <prolog>
+    <metadata>
+      <audience type="" job="" experiencelevel=""/>
+      <othermeta name="status" content="draft"/>
+      <othermeta name="lifecycle-stage" content=""/>
+    </metadata>
+  </prolog>
+  <troublebody>
+    <condition>
+    </condition>
+    <troubleSolution>
+      <cause>
+      </cause>
+      <remedy>
+      </remedy>
+    </troubleSolution>
+  </troublebody>
+</troubleshooting>

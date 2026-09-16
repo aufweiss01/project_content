@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map PUBLIC "-//OASIS//DTD DITA 1.3 Map//EN" "map.dtd">
+<map xml:lang="de-DE">
+  <title>Project Names</title>
+  <keydef keys="productname">
+    <topicmeta><linktext>project_content</linktext></topicmeta>
+  </keydef>
+  <keydef keys="productversion">
+    <topicmeta><linktext>Platzhaltertext - durch echten Baustein ersetzen oder loeschen.</linktext></topicmeta>
+  </keydef>
+  <keydef keys="companyname">
+    <topicmeta><linktext>Platzhaltertext - durch echten Baustein ersetzen oder loeschen.</linktext></topicmeta>
+  </keydef>
+  <keydef keys="businessunit">
+    <topicmeta><linktext>Platzhaltertext - durch echten Baustein ersetzen oder loeschen.</linktext></topicmeta>
+  </keydef>
+  <keydef keys="docdate">
+    <topicmeta><linktext>Platzhaltertext - durch echten Baustein ersetzen oder loeschen.</linktext></topicmeta>
+  </keydef>
+  <keydef keys="legalname">
+    <topicmeta><linktext>Platzhaltertext - durch echten Baustein ersetzen oder loeschen.</linktext></topicmeta>
+  </keydef>
+  <keydef keys="street">
+    <topicmeta><linktext>Platzhaltertext - durch echten Baustein ersetzen oder loeschen.</linktext></topicmeta>
+  </keydef>
+  <keydef keys="housenumber">
+    <topicmeta><linktext>Platzhaltertext - durch echten Baustein ersetzen oder loeschen.</linktext></topicmeta>
+  </keydef>
+  <keydef keys="postalcode">
+    <topicmeta><linktext>Platzhaltertext - durch echten Baustein ersetzen oder loeschen.</linktext></topicmeta>
+  </keydef>
+  <keydef keys="city">
+    <topicmeta><linktext>Platzhaltertext - durch echten Baustein ersetzen oder loeschen.</linktext></topicmeta>
+  </keydef>
+  <keydef keys="addressaddition">
+    <topicmeta><linktext>Platzhaltertext - durch echten Baustein ersetzen oder loeschen.</linktext></topicmeta>
+  </keydef>
+  <keydef keys="website">
+    <topicmeta><linktext>Platzhaltertext - durch echten Baustein ersetzen oder loeschen.</linktext></topicmeta>
+  </keydef>
+  <keydef keys="email">
+    <topicmeta><linktext>Platzhaltertext - durch echten Baustein ersetzen oder loeschen.</linktext></topicmeta>
+  </keydef>
+</map>

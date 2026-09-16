@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE concept PUBLIC "-//OASIS//DTD DITA 1.3 Concept//EN" "concept.dtd">
+<concept id="titlepage" outputclass="titlepage" xml:lang="de-DE">
+  <title>Titelseite</title>
+  <prolog>
+    <metadata>
+      <audience type="" job="" experiencelevel=""/>
+      <othermeta name="status" content="draft"/>
+      <othermeta name="lifecycle-stage" content=""/>
+    </metadata>
+  </prolog>
+  <conbody>
+    <p outputclass="product-name"><ph keyref="productname"/></p>
+    <p outputclass="product-version"><ph keyref="productversion"/></p>
+    <!-- doc-type wird von G automatisch aus project_content.ditamap gelesen, nicht hier eintragen -->
+    <p outputclass="doc-type"/>
+    <!-- doc-id wird von G automatisch aus project_content.ditamap gelesen, nicht hier eintragen -->
+    <p outputclass="doc-id"/>
+    <p outputclass="company-name"><ph keyref="companyname"/></p>
+    <p outputclass="doc-date"><ph keyref="docdate"/></p>
+  </conbody>
+</concept>

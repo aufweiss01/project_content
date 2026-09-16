@@ -1,0 +1,83 @@
+name: validierung
+
+# Zwei Trigger (Konfigurationsprotokoll v21, Abschnitt 8):
+# - pull_request auf develop: entspricht dem "Push"-Trigger (Aenderungen
+#   an einem PR gegen develop) - inkrementelle Pruefung, gate fuer den Merge.
+# - push auf develop: entspricht dem "Merge"-Trigger (PR tatsaechlich
+#   gemergt) - vollstaendiger Scan nach dem Merge.
+on:
+  pull_request:
+    branches: [develop]
+  push:
+    branches: [develop]
+
+jobs:
+  validierung:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          submodules: recursive
+          # Oeffentliche Repos funktionieren ohne hinterlegten Schluessel
+          # (Fallback auf den automatischen github.token); private Nutzung
+          # spaeter ueber SUBMODULE_PAT.
+          token: ${{ secrets.SUBMODULE_PAT || github.token }}
+
+      - name: Pruefen, ob B als Submodul eingebunden ist
+        id: b-check
+        run: |
+          if [ -f "shared/reuse/shared_names.ditamap" ]; then
+            echo "vorhanden=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "vorhanden=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: companyname-Override mergen (merge_names.py, Abschnitt 6)
+        if: steps.b-check.outputs.vorhanden == 'true'
+        run: |
+          python merge_names.py --a docs/reuse/project_names.ditamap --b shared/reuse/shared_names.ditamap
+
+      # aufweiss01 durch den tatsaechlichen GitHub-Kontonamen ersetzen, in dem
+      # C und H (Module C-H) liegen - dokumentierter Einrichtungsschritt.
+      - name: Modul C - DTD-/Referenzpruefung
+        uses: aufweiss01/dita_validation/.github/actions/validate@v1.0.1
+        with:
+          pfad: .
+          root: docs/project_content.ditamap
+
+      - name: Pruefmodus fuer Modul D ermitteln (Push vs. Merge, Abschnitt 8)
+        id: d-modus
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            DATEIEN=$(git diff --name-only "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}" -- '*.dita' '*.ditamap' | tr '\n' ' ')
+            echo "dateien=$DATEIEN" >> "$GITHUB_OUTPUT"
+          else
+            echo "dateien=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Modul D - Linkpruefung
+        uses: aufweiss01/link_validation/.github/actions/validate@v1.0.0
+        with:
+          pfad: .
+          dateien: ${{ steps.d-modus.outputs.dateien }}
+          timeout: '10'
+
+      # E und F sind optional (Abschnitt 5) und werden nur aufgerufen, wenn
+      # das jeweilige Repository die zugehoerige Variable gesetzt hat
+      # (vars.USE_MODULE_E / vars.USE_MODULE_F, Abschnitt 6).
+      - name: Modul E - Metadatenpruefung
+        if: vars.USE_MODULE_E == 'true'
+        uses: aufweiss01/metadata_validation/.github/actions/validate@v1.0.0
+        with:
+          pfad-a: .
+          pfad-b: ${{ steps.b-check.outputs.vorhanden == 'true' && 'shared' || '' }}
+
+      - name: Modul F - Terminologiepruefung
+        if: vars.USE_MODULE_F == 'true'
+        uses: aufweiss01/terminology_validation/.github/actions/validate@v1.0.0
+        with:
+          projekt-termbase: project_termbase.tbx
+          geteilte-termbase: ${{ steps.b-check.outputs.vorhanden == 'true' && 'shared/shared_termbase.tbx' || '' }}
+          pfad: .

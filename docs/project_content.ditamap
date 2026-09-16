@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map PUBLIC "-//OASIS//DTD DITA 1.3 Map//EN" "map.dtd">
+<map xml:lang="de-DE">
+  <title>project_content</title>
+  <topicmeta>
+    <othermeta name="doc-id" content=""/>
+    <othermeta name="doc-type" content=""/>
+  </topicmeta>
+  <topicref href="titlepage.dita" outputclass="titlepage" toc="no"/>
+  <topicref href="imprint.dita" outputclass="imprint"/>
+  <mapref href="reuse/reusables.ditamap"/>
+  <mapref href="links/relationship_table.ditamap"/>
+</map>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE valuelist-set SYSTEM "valuelists.dtd">
+<valuelist-set>
+  <valuelist field="status">
+    <value name="draft"/>
+    <value name="in-review"/>
+    <value name="approved"/>
+    <value name="outdated"/>
+    <value name="deprecated"/>
+  </valuelist>
+  <valuelist field="translation-status">
+    <value name="translation-requested"/>
+    <value name="in-translation"/>
+    <value name="translation-review"/>
+    <value name="translation-approved"/>
+    <value name="outdated"/>
+  </valuelist>
+  <!-- product: keine festen Werte, Namenskonvention: klein
+geschrieben, Wortgrenzen mit Unterstrich, abgeleitet vom
+prodname-Wert. Beispiel: prodname "Muster Anlage X200" wird zu
+product "muster_anlage_x200". Werte je Kundenprojekt festlegen,
+siehe modul_e_valuelists_vorschlag_v18.md, Abschnitt 3. -->
+</valuelist-set>
