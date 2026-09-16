@@ -1,0 +1,4 @@
+[submodule "shared"]
+	path = shared
+	url = https://github.com/aufweiss01/shared_content.git
+	branch = develop
