@@ -8,6 +8,7 @@
   </topicmeta>
   <topicref href="titlepage.dita" outputclass="titlepage" toc="no"/>
   <topicref href="imprint.dita" outputclass="imprint"/>
+  <topicref href="concepts/c_9999_demo_topic.dita"/>
   <mapref href="reuse/reusables.ditamap"/>
   <mapref href="links/relationship_table.ditamap"/>
 </map>

@@ -1,0 +1,47 @@
+name: Publish DITA Demo
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install DITA-OT
+        run: |
+          curl -fsSL https://www.dita-ot.org/4.3/download/dita-ot-4.3.3.zip -o dita-ot.zip
+          unzip -q dita-ot.zip
+          echo "DITA_OT_HOME=$PWD/dita-ot-4.3.3" >> "$GITHUB_ENV"
+          echo "$PWD/dita-ot-4.3.3/bin" >> "$GITHUB_PATH"
+
+      - name: Build HTML5
+        run: |
+          dita \
+            --input=docs/project_content.ditamap \
+            --format=html5 \
+            --output=output
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: output
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
