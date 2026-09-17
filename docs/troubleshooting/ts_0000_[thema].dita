@@ -16,6 +16,9 @@
       <cause>
       </cause>
       <remedy>
+        <steps>
+          <step><cmd></cmd></step>
+        </steps>
       </remedy>
     </troubleSolution>
   </troublebody>
