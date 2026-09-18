@@ -16,12 +16,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
       - name: Install DITA-OT
         run: |
-          curl -fsSL https://www.dita-ot.org/4.3/download/dita-ot-4.3.3.zip -o dita-ot.zip
+          curl -fsSL https://github.com/dita-ot/dita-ot/releases/download/4.4.1/dita-ot-4.4.1.zip -o dita-ot.zip
           unzip -q dita-ot.zip
-          echo "DITA_OT_HOME=$PWD/dita-ot-4.3.3" >> "$GITHUB_ENV"
-          echo "$PWD/dita-ot-4.3.3/bin" >> "$GITHUB_PATH"
+          echo "DITA_OT_HOME=$PWD/dita-ot-4.4.1" >> "$GITHUB_ENV"
+          echo "$PWD/dita-ot-4.4.1/bin" >> "$GITHUB_PATH"
 
       - name: Build HTML5
         run: |
