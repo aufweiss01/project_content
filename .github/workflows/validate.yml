@@ -52,7 +52,7 @@ jobs:
       # Vorlage steht nur ein Platzhalter. Kann in "uses:" nicht per
       # Ausdruck eingesetzt werden (GitHub-Einschraenkung).
       - name: Modul C - DTD-/Referenzpruefung
-        uses: aufweiss01/dita_validation/.github/actions/validate@v1.0.0
+        uses: aufweiss01/dita_validation/.github/actions/validate@v1.0.1
         with:
           pfad: .
           root: docs/project_content.ditamap
