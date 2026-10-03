@@ -1,0 +1,39 @@
+name: branch-guard
+
+# Duenne Aufruferdatei fuer den Waechter aus Modul J (partner_collaboration),
+# Entscheidungen des Planungs-Chats vom 28.09.2026: Pull Requests nach main
+# sind nur von develop oder hotfix/* erlaubt, nur aus demselben Repo
+# (kein Fork). Die Pruefung selbst liegt vollstaendig in Modul J.
+#
+# pull_request_target statt pull_request: laeuft im Kontext des Zielrepos,
+# auch bei Pull Requests aus Forks - der Waechter kann sie daher ablehnen.
+# Die Workflow-Datei wird dabei vom Zielbranch (main) gelesen - sie wirkt
+# erst, wenn sie auf main liegt (Einrichtungsreihenfolge siehe README.md).
+# "edited" erfasst auch das nachtraegliche Umstellen des Zielbranchs eines
+# bestehenden Pull Requests auf main.
+#
+# Bewusst KEIN actions/checkout: Bei pull_request_target darf Code aus dem
+# Pull Request nicht ausgecheckt/ausgefuehrt werden. Der Waechter braucht
+# nur die Ereignisdaten des Pull Requests.
+#
+# Kontoname in der uses:-Zeile (Konto, in dem partner_collaboration
+# liegt) setzt modul_a.bat beim Anlegen ein; in der Vorlage steht nur ein
+# Platzhalter. Kann in "uses:" nicht per Ausdruck eingesetzt werden
+# (GitHub-Einschraenkung, wie in validate.yml).
+on:
+  pull_request_target:
+    branches: [main]
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  # Der Job-Name "branch-guard" ist der erforderliche Check in main-protect.
+  branch-guard:
+    runs-on: ubuntu-24.04
+    steps:
+      # Input allowed-source-branches bewusst nicht gesetzt: der Standard
+      # "develop,hotfix/*" wird einmalig in Modul J gepflegt.
+      - name: Quellbranch des Pull Requests pruefen (Modul J)
+        uses: aufweiss01/partner_collaboration/.github/actions/branch-guard@v1.0.0

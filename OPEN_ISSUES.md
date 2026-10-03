@@ -1,29 +1,27 @@
 # Offene Punkte - Modul A (project_content)
 
-- .github\workflows\validate.yml ruft C und D konkret auf, E und F
-  optional ueber vars.USE_MODULE_E/vars.USE_MODULE_F (Abschnitt 6).
-  Vor dem ersten echten Lauf: Platzhalter "^<org^>" in allen "uses:"-
-  Zeilen durch den tatsaechlichen GitHub-Kontonamen von C-H ersetzen.
-- Die Push-/Merge-Unterscheidung in validate.yml (pull_request- vs.
-  push-Event auf develop, fuer D's --files-/--input-Modus) ist eine
-  Auslegung des Planungs-Chats, noch nicht real gegen einen echten
-  PR/Merge verifiziert - vor produktivem Branch-Schutz nachholen.
-- Retroaktive Nachpruefung von A durch C (Konfigurationsprotokoll v21,
-  Abschnitt 8): Konventionspruefung (DOCTYPE-Version 1.3, xml:lang) am
-  05.09.2026 real mit validate_dita.py gegen den aktuellen Stand von A
-  ausgefuehrt - 15/15 Dateien fehlerfrei. Die DTD-/Referenzpruefung
-  (Mechanismus 1, benoetigt DITA-OT) sowie die transitive Pruefung
-  (--root docs\project_content.ditamap) stehen noch aus - lokal
-  nachholen: python validate_dita.py --input project_content
-  --root project_content\docs\project_content.ditamap
+- Kontoname aufweiss01 wurde beim Anlegen in validate.yml, branch_guard.yml
+  und CODEOWNERS eingesetzt. Bei einer Organisation pruefen, ob
+  CODEOWNERS ein Team (@organisation/team) statt des Kontos nennen soll.
+- Branch-Schutz und externe Partner einrichten (Entscheidungen
+  28.09.2026) - GitHub-Einstellungen, keine Dateien. Reihenfolge und
+  Details siehe README.md, Abschnitt "Branch-Schutz und externe Partner":
+  a) Standardbranch develop; b) CODEOWNERS/validate.yml/branch_guard.yml
+  per Pull Request gegen develop; c) einmal Pull Request develop nach
+  main; d) danach in main-protect "validierung" und "branch-guard" als
+  erforderliche Checks; e) Code-Owner-Freigabe, Bypass nur Repository
+  admin fuer Pull Requests; f) Ruleset hotfix/* mit Restrict creations;
+  g) Freigabe von Fork-Workflows fuer alle Externen; h) erst dann
+  Partner einladen (Rolle Write).
+- Offen, im Pilot zu verifizieren: Ist die Bypass-Rolle
+  "Repository admin" bei einem Repo im persoenlichen Konto (keine
+  Organisation) in den Rulesets waehlbar? Ergebnis an den
+  Planungs-Chat melden.
+- Private Nutzung mit externen Partnern setzt GitHub Team voraus - bei
+  GitHub Free wirken Rulesets nur in oeffentlichen Repos.
 - Uebersetzungsinhalte: bewusst kein Vorlagenordner in A angelegt. Loesung
   folgt ueber das perspektivische Modul L (content_translation,
-  Konfigurationsprotokoll v21, Abschnitt 9), sobald dieses ausgearbeitet ist.
-- Benennungskonvention fuer neue Topics: [typ]_[nnnn]_[thema].dita,
-  id="[typ]_[nnnn]" (vierstellige Nummer je Topic-Typ, 0001-9999;
-  0000 ist der Vorlagendatei vorbehalten). Die automatische Pruefung
-  auf Muster-Einhaltung und doppelt vergebene Nummern (Erweiterung
-  von Modul C) ist noch nicht umgesetzt - bis dahin manuell auf
-  eindeutige Nummern achten, insbesondere bei parallelen Branches.
-- merge_names.py (companyname-Override, Abschnitt 6) ist in validate.yml
-  verdrahtet (B-Submodul-Check plus Aufruf vor Modul C).
+  Konfigurationsprotokoll v22, Abschnitt 9), sobald dieses ausgearbeitet ist.
+- G/H (Publish) sind ausdruecklich NICHT Teil von validate.yml
+  (Abschnitt 6) - eigener Publish-Workflow noch nicht entworfen,
+  Trigger-Mechanismus offen (Abschnitt 8).

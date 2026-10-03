@@ -1,13 +1,21 @@
 name: validierung
 
-# Zwei Trigger (Konfigurationsprotokoll v21, Abschnitt 8):
+# Trigger (Konfigurationsprotokoll v23, Abschnitt 6; ergaenzt um die
+# Entscheidungen des Planungs-Chats vom 28.09.2026):
 # - pull_request auf develop: entspricht dem "Push"-Trigger (Aenderungen
 #   an einem PR gegen develop) - inkrementelle Pruefung, gate fuer den Merge.
+# - pull_request auf main (neu, 28.09.2026): PRs von develop oder hotfix/*
+#   nach main. Der Job "validierung" ist in main-protect erforderlicher
+#   Check. Die Dateiliste fuer Modul D (git diff base.sha..head.sha) bleibt
+#   dabei sinnvoll: bei hotfix/* sind das genau die noch ungeprueften
+#   Hotfix-Aenderungen, bei develop die Aenderungen seit dem letzten
+#   Stand von main.
 # - push auf develop: entspricht dem "Merge"-Trigger (PR tatsaechlich
 #   gemergt) - vollstaendiger Scan nach dem Merge.
+# Beide develop-Trigger im Pilot real verifiziert (17.09.2026).
 on:
   pull_request:
-    branches: [develop]
+    branches: [develop, main]
   push:
     branches: [develop]
 
@@ -39,8 +47,10 @@ jobs:
         run: |
           python merge_names.py --a docs/reuse/project_names.ditamap --b shared/reuse/shared_names.ditamap
 
-      # aufweiss01 durch den tatsaechlichen GitHub-Kontonamen ersetzen, in dem
-      # C und H (Module C-H) liegen - dokumentierter Einrichtungsschritt.
+      # Kontoname in den uses:-Zeilen (Konto, in dem C bis H liegen) setzt
+      # modul_a.bat beim Anlegen ein (Abfrage oder Parameter); in der
+      # Vorlage steht nur ein Platzhalter. Kann in "uses:" nicht per
+      # Ausdruck eingesetzt werden (GitHub-Einschraenkung).
       - name: Modul C - DTD-/Referenzpruefung
         uses: aufweiss01/dita_validation/.github/actions/validate@v1.0.1
         with:
@@ -81,3 +91,6 @@ jobs:
           projekt-termbase: project_termbase.tbx
           geteilte-termbase: ${{ steps.b-check.outputs.vorhanden == 'true' && 'shared/shared_termbase.tbx' || '' }}
           pfad: .
+
+# G/H (Publish) sind ausdruecklich NICHT Teil dieser Datei (Abschnitt 6) -
+# eigener Publish-Workflow, Trigger-Mechanismus noch offen (Abschnitt 8).
