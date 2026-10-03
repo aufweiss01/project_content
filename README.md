@@ -26,7 +26,11 @@ project_content/
 ├── README.md                       ← diese Datei
 ├── OPEN_ISSUES.md                  ← echte offene Punkte, keine geloesten Design-Fragen
 ├── .gitignore
-├── .github/workflows/validate.yml  ← ruft C, D, E, F zu festen Versionen auf (Platzhalter)
+├── .github/
+│   ├── CODEOWNERS                  ← Code Owner fuer Pull-Request-Freigaben (Kontoname von modul_a.bat eingesetzt)
+│   └── workflows/
+│       ├── validate.yml            ← ruft C, D, E, F auf (real ausgearbeitet, siehe unten)
+│       └── branch_guard.yml        ← ruft den Waechter aus Modul J auf (nur PRs gegen main)
 ├── docs/
 │   ├── project_content.ditamap     ← Hauptmap, bindet titlepage/imprint per topicref + reusables/relationship_table per mapref
 │   ├── titlepage.dita               ← Datenquelle fuer DITA-OTs Titelseiten-Mechanismus (rendert keine eigene Seite)
@@ -48,12 +52,31 @@ lesenden Modulen: `modul_a_struktur.md` (außerhalb des Repos gepflegt).
 ## Einrichtung
 
 ```cmd
-modul_a.bat
+modul_a.bat [Kontoname]
 ```
 
 Legt die Struktur relativ zum Speicherort der `.bat`-Datei an (nicht
 relativ zum aktuellen Arbeitsverzeichnis der Eingabeaufforderung), bricht
 ab, wenn der Zielordner `project_content` bereits existiert.
+
+**GitHub-Kontoname:** Wird als Parameter übergeben oder beim Start
+abgefragt – gemeint ist das Konto, in dem die Module C bis J liegen.
+Erlaubt sind nur Buchstaben, Ziffern und Bindestrich, höchstens 39
+Zeichen, kein Bindestrich am Anfang oder Ende; bei ungültiger Eingabe
+bricht die `.bat` ab, bevor etwas angelegt wird. Der Name wird
+automatisch in die fünf `uses:`-Zeilen (`validate.yml`, `branch_guard.yml`)
+und in `CODEOWNERS` eingesetzt; die Vorlagen enthalten nur einen
+Platzhalter. Dafür wird PowerShell benötigt (unter Windows vorhanden).
+
+**Bereits angelegtes Repo (z. B. Pilot):** `modul_a.bat` nicht im
+bestehenden Repo ausführen. Stattdessen in einem leeren Ordner neu
+erzeugen (gleicher Kontoname) und nur die geänderten Dateien in den
+lokalen Klon des bestehenden Repos kopieren – `.github/workflows/validate.yml`,
+`.github/workflows/branch_guard.yml`, `.github/CODEOWNERS`, `README.md`,
+`OPEN_ISSUES.md` –, auf einem eigenen Branch per `git diff` prüfen und
+per Pull Request gegen `develop` einbringen. Nicht den ganzen Ordner
+kopieren: Inhalte unter `docs/` würden sonst mit den Vorlagen
+überschrieben.
 
 ## companyname-Override (`merge_names.py`)
 
@@ -70,12 +93,87 @@ committet/gepusht. Bekannte Grenze: Bei Mehrfach-Key-`keydef`s mit
 *teilweiser* Key-Überschneidung zwischen A und B wird nicht sauber
 aufgesplittet (siehe Docstring in `merge_names.py`).
 
-Aufruf (aktuell noch nicht in `validate.yml` verdrahtet, siehe
-`OPEN_ISSUES.md`):
+Aufruf in `validate.yml` verdrahtet (per B-Submodul-Erkennung, `if`-Bedingung).
+Manueller Testaufruf:
 
 ```cmd
 python merge_names.py --a docs\reuse\project_names.ditamap --b <Pfad-zu-shared_names.ditamap-in-B>
 ```
+
+## CI/CD-Pipeline (`validate.yml`)
+
+Trigger: `pull_request` auf `develop` und `main` (inkrementelle Prüfung
+vor dem Merge) und `push` auf `develop` (vollständiger Scan nach dem
+Merge). Die beiden `develop`-Trigger sind im Pilot real verifiziert; der
+Trigger für Pull Requests gegen `main` ist neu (28.09.2026) – dort ist
+der Job `validierung` erforderlicher Check. Ruft `merge_names.py`
+(bedingt), Modul C (`--root`, immer voller Lauf), Modul D
+(`--files`/`--input` je nach Event) sowie optional Module E/F auf.
+Den Kontonamen in den vier `uses:`-Zeilen setzt `modul_a.bat` ein
+(siehe „Einrichtung“). G/H
+(Publish) sind ausdrücklich **nicht** Teil dieser Datei – eigener
+Publish-Workflow, noch nicht entworfen.
+
+## Branch-Schutz und externe Partner
+
+Externe Partner arbeiten mit der Rolle **Write** direkt in diesem Repo.
+Geschützt wird über zwei Mechanismen: Rulesets mit Code-Owner-Freigabe
+(GitHub-Einstellungen, keine Dateien) und den Wächter aus Modul J
+(`partner_collaboration`), der Pull Requests nach `main` nur von
+`develop` oder `hotfix/*` und nur aus diesem Repo zulässt (keine Forks).
+
+**Zugehörige Dateien:**
+
+- `.github/CODEOWNERS` – Code Owner für alle Dateien (`*`) und eigens für
+  `/.github/`. Von `modul_a.bat` mit dem angegebenen Kontonamen erzeugt;
+  bei Organisationen ggf. von Hand auf ein Team (`@organisation/team`)
+  umstellen.
+  GitHub liest immer die Fassung auf dem **Zielbranch** des Pull
+  Requests – die Datei muss daher auf `develop` **und** `main` liegen.
+- `.github/workflows/branch_guard.yml` – dünne Aufruferdatei, Trigger
+  `pull_request_target` gegen `main`, Job `branch-guard` (Name des
+  erforderlichen Checks). Kontoname in der `uses:`-Zeile von
+  `modul_a.bat` eingesetzt. Kein Checkout von Pull-Request-Code (Sicherheit bei
+  `pull_request_target`). Erlaubte Quellbranches: Standardwert aus
+  Modul J (`develop,hotfix/*`).
+
+**Einrichtung durch den Administrator – Reihenfolge einhalten:**
+
+1. **Standardbranch** auf `develop` stellen (Settings > General >
+   Default branch).
+2. `CODEOWNERS`, `validate.yml` und `branch_guard.yml` per Pull Request
+   gegen `develop` einbringen.
+3. Einmal Pull Request `develop` → `main`, damit die Dateien auch auf
+   `main` liegen. Der Wächter läuft bei diesem ersten Pull Request noch
+   nicht – `pull_request_target` liest die Workflow-Datei vom Zielbranch,
+   und dort liegt sie erst nach diesem Merge.
+4. Erst danach in `main-protect` die Checks `validierung` und
+   `branch-guard` als erforderlich eintragen – sie stehen erst nach einem
+   ersten Lauf zur Auswahl.
+5. `develop-protect` und `main-protect`: Code-Owner-Freigabe verlangen,
+   1 Freigabe. Bypass nur für die Rolle „Repository admin", Modus „nur
+   für Pull Requests" (nötig, weil GitHub Autoren ihre eigenen Pull
+   Requests nicht freigeben lässt). Bei einem Repo im persönlichen Konto
+   prüfen, ob diese Rolle wählbar ist (siehe `OPEN_ISSUES.md`).
+6. Eigenes Ruleset für `hotfix/*` mit „Restrict creations" – Bypass wie
+   oben, damit nur der Administrator Hotfix-Branches anlegt.
+7. Settings > Actions > General: Workflows aus Fork-Pull-Requests nur
+   nach Freigabe ausführen, Einstellung sinngemäß „Require approval for
+   all outside collaborators" (Bezeichnung kann je nach GitHub-Stand
+   abweichen, z. B. „external contributors").
+8. Erst danach Partner einladen (Settings > Collaborators, Rolle
+   **Write**). In einem öffentlichen Repo **keinen** `SUBMODULE_PAT`
+   hinterlegen – `validate.yml` nutzt dann automatisch den
+   `github.token`.
+
+**Hotfix-Ablauf:** Der Administrator legt `hotfix/…` von `main` aus an,
+Pull Request `hotfix/…` → `main`, danach von Hand Pull Request `main` →
+`develop`, damit die Korrektur auch in `develop` ankommt. Eine
+Automatik für die Rückführung ist bewusst zurückgestellt.
+
+**Voraussetzung für private Repos:** Bei GitHub Free wirken Rulesets nur
+in öffentlichen Repos. Private Nutzung mit externen Partnern setzt
+GitHub Team voraus.
 
 ## Wichtige praktische Hinweise
 
@@ -97,26 +195,20 @@ Impressum-Rendering bindend für die Ausgabereihenfolge** (nicht mehr nur
 kosmetisch) – `website`/`email` stehen direkt nach `address-addition`,
 vor `doc-date`.
 
-**Retroaktive Nachprüfung durch C:** Die Konventionsprüfung
-(DOCTYPE-Version 1.3, `xml:lang`) wurde bereits real gegen den aktuellen
-Stand ausgeführt (15/15 Dateien fehlerfrei). Die vollständige
-DTD-/Referenzprüfung (`validate_dita.py --root`) benötigt eine lokale
-DITA-OT-Installation und steht noch aus – Befehl siehe `OPEN_ISSUES.md`.
-
-**Benennungskonvention für neue Topics (entschieden, September 2026):**
-Dateiname `[typ]_[nnnn]_[thema].dita`, `id`-Attribut `[typ]_[nnnn]`
-(vierstellige, je Topic-Typ getrennt gezählte Nummer, 0001–9999).
-`[thema]` muss nicht eindeutig sein - die Eindeutigkeit stellt allein
-`[typ]_[nnnn]` sicher, und `[thema]` kann jederzeit umbenannt werden,
-ohne die Nummer zu ändern. Die Vorlagedatei je Typ trägt die reservierte
-Nummer `0000`. Beim Anlegen eines neuen Topics: Vorlage kopieren,
-nächste freie Nummer des jeweiligen Typs vergeben, `[thema]` durch
-einen sprechenden Kurztitel ersetzen (Dateiname und `id` gleichermaßen).
+**Retroaktive Nachprüfung durch C:** Erledigt. Konventionsprüfung
+(DOCTYPE-Version 1.3, `xml:lang`) und vollständige DTD-/Referenzprüfung
+(`--root`) liefen im Pilot real durch (`dita_validation` v1.0.1).
 
 **Platzhalter-Notation:** Content-Platzhalter verwenden den ausformulierten
 Satz „Platzhaltertext – durch echten Baustein ersetzen oder löschen."
-Identifikator-Platzhalter (Dateiname-Bestandteil `[thema]`)
+Identifikator-Platzhalter (Dateiname `[thema]`, `id`-Attribut `[typ]_0000`)
 sind davon nicht betroffen.
+
+**Topic-Benennungskonvention:** `[typ]_[nnnn]_[thema].dita`, `id`-Attribut
+`[typ]_[nnnn]` (vierstellige, je Typ getrennt gezählte Nummer). Vorlagedateien
+tragen die reservierte Nummer `0000`. `[thema]` muss nicht eindeutig sein und
+kann jederzeit umbenannt werden, ohne Nummer/`id` zu ändern. Reuse-Container
+(`c_reuse.dita` usw.) sind von der Nummerierung ausgenommen.
 
 **Prolog-Basisvorlage:** Alle Topics führen `audience` (leer),
 `othermeta[status]` (Default `draft`) und `othermeta[lifecycle-stage]`

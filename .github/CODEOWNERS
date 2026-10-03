@@ -1,0 +1,8 @@
+# Code Owner fuer project_content (Modul A), von modul_a.bat erzeugt.
+# Bei Organisationen ggf. durch ein Team ersetzen (@organisation/team).
+# Wirksam ist immer die CODEOWNERS-Datei auf dem Zielbranch des Pull
+# Requests - sie muss daher auf develop UND auf main liegen.
+# Die letzte passende Zeile gewinnt: /.github/ ist eigens aufgefuehrt,
+# damit Workflows spaeter einem anderen Owner zugeordnet werden koennen.
+* @aufweiss01
+/.github/ @aufweiss01
