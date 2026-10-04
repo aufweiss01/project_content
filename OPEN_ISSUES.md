@@ -1,8 +1,10 @@
 # Offene Punkte - Modul A (project_content)
 
-- Kontoname aufweiss01 wurde beim Anlegen in validate.yml, branch_guard.yml
-  und CODEOWNERS eingesetzt. Bei einer Organisation pruefen, ob
-  CODEOWNERS ein Team (@organisation/team) statt des Kontos nennen soll.
+- Kontoname aufweiss01 (Konto der Module C bis J) wurde beim Anlegen in
+  validate.yml und branch_guard.yml eingesetzt, als Code Owner in
+  CODEOWNERS: aufweiss01. Code Owner brauchen Schreibrecht im Repo,
+  sonst ignoriert GitHub den Eintrag. Bei einer Organisation pruefen,
+  ob ein Team (@organisation/team) eingetragen werden soll.
 - Branch-Schutz und externe Partner einrichten (Entscheidungen
   28.09.2026) - GitHub-Einstellungen, keine Dateien. Reihenfolge und
   Details siehe README.md, Abschnitt "Branch-Schutz und externe Partner":

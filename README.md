@@ -52,25 +52,39 @@ lesenden Modulen: `modul_a_struktur.md` (außerhalb des Repos gepflegt).
 ## Einrichtung
 
 ```cmd
-modul_a.bat [Kontoname]
+modul_a.bat [Kontoname] ["Handle1 Handle2 ..."]
 ```
 
 Legt die Struktur relativ zum Speicherort der `.bat`-Datei an (nicht
 relativ zum aktuellen Arbeitsverzeichnis der Eingabeaufforderung), bricht
 ab, wenn der Zielordner `project_content` bereits existiert.
 
-**GitHub-Kontoname:** Wird als Parameter übergeben oder beim Start
-abgefragt – gemeint ist das Konto, in dem die Module C bis J liegen.
-Erlaubt sind nur Buchstaben, Ziffern und Bindestrich, höchstens 39
-Zeichen, kein Bindestrich am Anfang oder Ende; bei ungültiger Eingabe
-bricht die `.bat` ab, bevor etwas angelegt wird. Der Name wird
-automatisch in die fünf `uses:`-Zeilen (`validate.yml`, `branch_guard.yml`)
-und in `CODEOWNERS` eingesetzt; die Vorlagen enthalten nur einen
-Platzhalter. Dafür wird PowerShell benötigt (unter Windows vorhanden).
+Das Skript braucht **zwei Werte**, die oft, aber nicht immer gleich sind.
+Beide werden als Parameter übergeben oder beim Start abgefragt:
+
+1. **Konto der Module** (Parameter 1): das GitHub-Konto, in dem die Module
+   C bis J liegen. Der Name wird automatisch in die fünf `uses:`-Zeilen
+   (`validate.yml`, `branch_guard.yml`) eingesetzt; die Vorlagen enthalten
+   nur einen Platzhalter.
+2. **Code Owner** (Parameter 2): ein oder mehrere GitHub-Handles, die
+   Pull Requests freigeben dürfen. Mehrere durch Leerzeichen trennen und
+   in Anführungszeichen setzen, z. B. `modul_a.bat mein-konto "mein-konto
+   max-muster"`. Ohne Angabe (bzw. mit Enter bei der Abfrage) gilt das
+   Konto aus Parameter 1. Alle Handles werden in `CODEOWNERS` für `*` und
+   `/.github/` eingetragen.
+
+Jeder Name bzw. Handle darf nur Buchstaben, Ziffern und Bindestrich
+enthalten (ohne `@`), höchstens 39 Zeichen, kein Bindestrich am Anfang
+oder Ende; bei ungültiger Eingabe bricht die `.bat` ab, bevor etwas
+angelegt wird. **Code Owner brauchen Schreibrecht im Repo** – Handles ohne
+Schreibrecht ignoriert GitHub. Teams (`@organisation/team`) nimmt die
+`.bat` nicht entgegen und müssen von Hand in `CODEOWNERS` eingetragen
+werden. Für das Einsetzen wird PowerShell benötigt (unter Windows
+vorhanden).
 
 **Bereits angelegtes Repo (z. B. Pilot):** `modul_a.bat` nicht im
 bestehenden Repo ausführen. Stattdessen in einem leeren Ordner neu
-erzeugen (gleicher Kontoname) und nur die geänderten Dateien in den
+erzeugen (gleiche Werte für Konto und Code Owner) und nur die geänderten Dateien in den
 lokalen Klon des bestehenden Repos kopieren – `.github/workflows/validate.yml`,
 `.github/workflows/branch_guard.yml`, `.github/CODEOWNERS`, `README.md`,
 `OPEN_ISSUES.md` –, auf einem eigenen Branch per `git diff` prüfen und
@@ -125,9 +139,10 @@ Geschützt wird über zwei Mechanismen: Rulesets mit Code-Owner-Freigabe
 **Zugehörige Dateien:**
 
 - `.github/CODEOWNERS` – Code Owner für alle Dateien (`*`) und eigens für
-  `/.github/`. Von `modul_a.bat` mit dem angegebenen Kontonamen erzeugt;
-  bei Organisationen ggf. von Hand auf ein Team (`@organisation/team`)
-  umstellen.
+  `/.github/`. Von `modul_a.bat` mit den angegebenen Code-Owner-Handles
+  erzeugt (nicht mit dem Konto der Module, sofern abweichend); alle
+  Code Owner brauchen Schreibrecht im Repo. Bei Organisationen ggf. von
+  Hand auf ein Team (`@organisation/team`) umstellen.
   GitHub liest immer die Fassung auf dem **Zielbranch** des Pull
   Requests – die Datei muss daher auf `develop` **und** `main` liegen.
 - `.github/workflows/branch_guard.yml` – dünne Aufruferdatei, Trigger
